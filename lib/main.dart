@@ -192,7 +192,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Playground',
       home: SafeArea(
-        child: const InappWebviewScreen(init_url: "https://map.kakao.com",),
+        // child: const InappWebviewScreen(init_url: "https://map.kakao.com",),
+        child: const InappWebviewScreen(init_url: "https://i8b309.p.ssafy.io",),
       )
     );
   }
