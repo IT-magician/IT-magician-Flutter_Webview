@@ -14,3 +14,10 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+--> You have to command 'flutter pub get' on terminal so that there are the dependencies in your project.
+
+## 넣은 권한
+
+GeoLocation(Android, IOS는 지원예정), Firebase Cloud Message(Android, IOS는 지원예정)
+Android HTTPS 관련권한(Cleartext, Android Security)
