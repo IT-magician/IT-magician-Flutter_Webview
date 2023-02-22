@@ -1,5 +1,7 @@
 // import 'package:http/http.dart';
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -126,15 +128,21 @@ void main() async {
     sound: true,
   );
 
-  // print('User granted permission: ${settings.authorizationStatus}');
-
-  // foreground message
+  // // print('User granted permission: ${settings.authorizationStatus}');
+  //
+  // // foreground message
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     print('Got a message whilst in the foreground!');
     print('Message data: ${message.data}');
 
+    String notification = "";
+
     if (message.notification != null) {
       print('Message also contained a notification: ${message.notification?.title} ${message.notification?.body}');
+
+
+
+
 
       // flutterLocalNotificationsPlugin.show(
       //     message.hashCode,
@@ -156,7 +164,22 @@ void main() async {
 
       // final SnackBar snackBar = SnackBar(content: Text("${message.notification?.title} : ${message.notification?.body}"));
       // snackbarKey.currentState?.showSnackBar(snackBar);
+
+
+
+      notification = '"title":"${message.notification?.title}", "body":"${message.notification?.body}"';
     }
+
+
+
+    final jsonEncoder = JsonEncoder();
+    // webview.webViewController?.evaluateJavascript(source: """
+    //                     writeFCM_data('${notification.isEmpty?"null":notification}, ${jsonEncoder.convert(message.data)}')
+    //    """);
+    webview.webViewController?.evaluateJavascript(source: """
+                        writeFCM_data('${jsonEncoder.convert(message.data)}')
+       """);
+
   });
 
 
@@ -182,6 +205,10 @@ void main() async {
   runApp( MyApp());
 }
 
+// InappWebviewScreen webview = InappWebviewScreen(init_url: "https://www.google.co.in/maps/",);
+// InappWebviewScreen webview = InappWebviewScreen(init_url: "https://i8b309.p.ssafy.io/",);
+InappWebviewScreen webview = InappWebviewScreen(init_url: "https://i8b309.p.ssafy.io/",);
+// InappWebviewScreen webview = InappWebviewScreen(init_url: "https://it-1magician.github.io/test/ddd/",);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -193,7 +220,8 @@ class MyApp extends StatelessWidget {
       title: 'Playground',
       home: SafeArea(
         // child: const InappWebviewScreen(init_url: "https://map.kakao.com",),
-        child: const InappWebviewScreen(init_url: "https://i8b309.p.ssafy.io",),
+        child: webview,
+        // child: WebScreen(),
       )
     );
   }
