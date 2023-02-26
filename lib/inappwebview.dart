@@ -22,9 +22,11 @@ import 'component/back_pressed.dart';
 
 class InappWebviewScreen extends StatefulWidget {
   final String api_gateway_url;
+  final bool alwaysCleanCacheBeforeStart;
+  final bool debug_showURL;
   InAppWebViewController? webViewController;
 
-  InappWebviewScreen({Key? key, required this.api_gateway_url}) : super(key: key);
+  InappWebviewScreen({Key? key, required this.api_gateway_url, required this.alwaysCleanCacheBeforeStart, required this.debug_showURL}) : super(key: key);
 
   @override
   State<InappWebviewScreen> createState() => _InappWebview();
@@ -68,6 +70,7 @@ class _InappWebview extends State<InappWebviewScreen> {
 
       // 여기에 access_token, fcm_token을 rest api로 등록 요청 로직 짜야함
       String url = "${widget.api_gateway_url}/user/update";
+      print(url);
       http.Response response = await http.post(
           Uri.parse(url),
           headers: <String, String> {
@@ -193,11 +196,14 @@ class _InappWebview extends State<InappWebviewScreen> {
                   initialOptions: options,
                   pullToRefreshController: pullToRefreshController,
                   onWebViewCreated: (controller) {
-                    controller.clearCache();
+                    if (widget.alwaysCleanCacheBeforeStart) controller.clearCache();
                     widget.webViewController = controller;
 
                     controller.addJavaScriptHandler(handlerName: "setAccess_token", callback: (args) async {
                       print("flutter!!!!!!!!!!! : ${args}");
+
+                      if (args == null || args.length < 1) return;
+
                       await saveAccess_token(args[0]);
 
 
@@ -205,7 +211,7 @@ class _InappWebview extends State<InappWebviewScreen> {
                       String? token = await FirebaseMessaging.instance.getToken();
 
                       // Save the initial token to the database
-                      saveTokenToDatabase(token!);
+                      await saveTokenToDatabase(token!);
                     });
                   },
                   initialUserScripts: UnmodifiableListView<UserScript>([
@@ -214,14 +220,11 @@ class _InappWebview extends State<InappWebviewScreen> {
                                 window.isFluttApp = true
                                 window.setAccess_tokenOnFlutterApp = (...args) => window.flutter_inappwebview.callHandler('setAccess_token', ...args);
                                 """, injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START),
-                    // UserScript(
-                    //     source: """
-                    //       window.setAccess_token = (...args) => window.flutter_inappwebview.callHandler('setAccess_token', ...args);
-                    //       window.isFluttApp = true
-                    //
-                    //       console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-                    //       """,
-                    //     injectionTime: UserScriptInjectionTime.AT_DOCUMENT_END),
+                    UserScript(
+                        source: """
+                          window.isFluttApp = true
+                          """,
+                        injectionTime: UserScriptInjectionTime.AT_DOCUMENT_END),
                   ]),
                   onLoadStart: (controller, url) async {
                     setState(() {
@@ -257,10 +260,10 @@ class _InappWebview extends State<InappWebviewScreen> {
                     return NavigationActionPolicy.ALLOW;
                   },
                   onLoadStop: (controller, url) async {
-                    // await controller.evaluateJavascript(source: """
-                    // const isFlutterApp = `yes, I'm Flutter`;
-                    // """);
-
+                    if (widget.debug_showURL)  print("onLoadStop url : ${url}");
+                    await controller.evaluateJavascript(source: """
+                          window.isFluttApp = true
+                    """);
 
                     pullToRefreshController.endRefreshing();
                     checkError(); //Check Error type: offline or other error

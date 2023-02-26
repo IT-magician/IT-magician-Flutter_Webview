@@ -133,7 +133,9 @@ void main() async {
     // webview.webViewController?.evaluateJavascript(source: """
     //                     writeFCM_data('${notification.isEmpty?"null":notification}, ${jsonEncoder.convert(message.data)}')
     //    """);
-    webview.webViewController?.evaluateJavascript(source: """
+
+    if (message.data != null && message.data.isNotEmpty)
+      webview.webViewController?.evaluateJavascript(source: """
                         window.fcmForegroundOnFlutterApp('${jsonEncoder.convert(message.data)}')
        """);
 
@@ -164,7 +166,7 @@ void main() async {
 
 // InappWebviewScreen webview = InappWebviewScreen(init_url: "https://www.google.co.in/maps/",);
 // InappWebviewScreen webview = InappWebviewScreen(init_url: "https://i8b309.p.ssafy.io/",);
-InappWebviewScreen webview = InappWebviewScreen(api_gateway_url: "https://i8b309.p.ssafy.io/",);
+InappWebviewScreen webview = InappWebviewScreen(api_gateway_url: "https://i8b309.p.ssafy.io", alwaysCleanCacheBeforeStart: true, debug_showURL: false,);
 // InappWebviewScreen webview = InappWebviewScreen(init_url: "https://it-magician.github.io/test/bbb/",);
 
 class MyApp extends StatelessWidget {
