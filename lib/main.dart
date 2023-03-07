@@ -164,9 +164,9 @@ void main() async {
   runApp( MyApp());
 }
 
-InappWebviewScreen webview = InappWebviewScreen(api_gateway_url: "https://www.google.co.in/maps/", alwaysCleanCacheBeforeStart: true, debug_showURL: false,);
+// InappWebviewScreen webview = InappWebviewScreen(api_gateway_url: "https://www.google.co.in/maps/", alwaysCleanCacheBeforeStart: true, debug_showURL: false,);
 // InappWebviewScreen webview = InappWebviewScreen(init_url: "https://i8b309.p.ssafy.io/",);
-// InappWebviewScreen webview = InappWebviewScreen(api_gateway_url: "https://i8b309.p.ssafy.io", alwaysCleanCacheBeforeStart: true, debug_showURL: false,);
+InappWebviewScreen webview = InappWebviewScreen(api_gateway_url: "https://www.b309-playground.com", alwaysCleanCacheBeforeStart: true, debug_showURL: false,);
 // InappWebviewScreen webview = InappWebviewScreen(init_url: "https://it-magician.github.io/test/bbb/",);
 
 class MyApp extends StatelessWidget {
